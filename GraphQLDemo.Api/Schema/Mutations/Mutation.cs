@@ -22,4 +22,20 @@ public class Mutation
 
         return courseType;
     }
+
+    public CourseResult UpdateCourse(Guid id, CourseInputType courseInput)
+    {
+        CourseResult course = _courses.FirstOrDefault(c => c.Id == id);
+
+        if (course == null)
+        {
+            throw new GraphQLException(new Error("Course not found.", "COURSE_NOT_FOUND"));
+        }
+
+        course.Name = courseInput.Name;
+        course.Subject = courseInput.Subject;
+        course.InstructorId = courseInput.InstructorId;
+
+        return course;
+    }
 }
