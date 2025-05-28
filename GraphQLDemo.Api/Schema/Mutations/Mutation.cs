@@ -38,4 +38,9 @@ public class Mutation
 
         return course;
     }
+
+    public bool DeleteCourse(Guid id)
+    {
+        return _courses.RemoveAll(c => c.Id == id) >= 1;
+    }
 }
