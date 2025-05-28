@@ -27,7 +27,7 @@ public class Mutation
         return courseType;
     }
 
-    public CourseResult UpdateCourse(Guid id, CourseInputType courseInput)
+    public async Task<CourseResult> UpdateCourse(Guid id, CourseInputType courseInput, [Service] ITopicEventSender topicEventSender)
     {
         CourseResult course = _courses.FirstOrDefault(c => c.Id == id);
 
@@ -39,6 +39,9 @@ public class Mutation
         course.Name = courseInput.Name;
         course.Subject = courseInput.Subject;
         course.InstructorId = courseInput.InstructorId;
+
+        string updateCourseTopic = $"{course.Id}_{nameof(Subscription.CourseUpdated)}";
+        await topicEventSender.SendAsync(updateCourseTopic, course);
 
         return course;
     }
