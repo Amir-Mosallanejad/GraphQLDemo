@@ -1,4 +1,7 @@
-﻿namespace GraphQLDemo.Api.Schema.Mutations;
+﻿using GraphQLDemo.Api.Schema.Subscriptions;
+using HotChocolate.Subscriptions;
+
+namespace GraphQLDemo.Api.Schema.Mutations;
 
 public class Mutation
 {
@@ -8,7 +11,7 @@ public class Mutation
     {
         _courses = new();
     }
-    public CourseResult CreateCourse(CourseInputType courseInput)
+    public async Task<CourseResult> CreateCourse(CourseInputType courseInput, [Service] ITopicEventSender topicEventSender)
     {
         CourseResult courseType = new()
         {
@@ -19,6 +22,7 @@ public class Mutation
         };
 
         _courses.Add(courseType);
+        await topicEventSender.SendAsync(nameof(Subscription.CourseCreated), courseType);
 
         return courseType;
     }
